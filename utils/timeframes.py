@@ -39,6 +39,44 @@ def timeframe_to_minutes(timeframe: str) -> int:
     return TIMEFRAME_MINUTES_MAP[timeframe]
 
 
+def timeframe_to_cron(timeframe: str) -> dict:
+    """
+    Convert a timeframe string (e.g., '1h', '15m') into a dictionary
+    that can be passed directly into APScheduler's CronTrigger.
+
+    Examples:
+        '1h'  -> {'minute': 0}
+        '4h'  -> {'minute': 0, 'hour': '*/4'}
+        '15m' -> {'minute': '*/15'}
+        '5m'  -> {'minute': '*/5'}
+        '1d'  -> {'hour': 0, 'minute': 0}
+
+    Supported units:
+        - m: minutes
+        - h: hours
+        - d: days
+    """
+    if timeframe not in TIMEFRAME_MINUTES_MAP:
+        raise ValueError(f"Unsupported timeframe for cron: {timeframe}")
+
+    # Parse the timeframe format: number + unit
+    unit = timeframe[-1]   # 'm', 'h', or 'd'
+    value = int(timeframe[:-1])
+
+    if unit == "m":
+        return {"minute": f"*/{value}"}
+
+    if unit == "h":
+        # Run at minute 0 of every Nth hour
+        return {"minute": 0, "hour": f"*/{value}"}
+
+    if unit == "d":
+        # Run at midnight every N days
+        return {"hour": 0, "minute": 0, "day": f"*/{value}"}
+
+    raise ValueError(f"Unsupported timeframe unit: {unit}")
+
+
 def datetime_to_timestamp_ms(dt: datetime) -> int:
     """
     Convert datetime to a millisecond-based timestamp.

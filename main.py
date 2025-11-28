@@ -1,16 +1,24 @@
-# This is a sample Python script.
+"""
+Main entry point of the AlgoTrading POC.
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+Starts the tick scheduler and keeps the application running.
+"""
+
+from engine.tick_engine import start_tick_scheduler
+import time
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+if __name__ == "__main__":
+    # Perform initial database population from the exchange
+    # initialize_market_data() - matan
 
+    # Start the global tick engine
+    scheduler = start_tick_scheduler()
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    try:
+        # Keep the main thread alive while the scheduler runs in the background
+        while True:
+            time.sleep(1)
+    except (KeyboardInterrupt, SystemExit):
+        scheduler.shutdown()
+        print("Tick scheduler stopped. Exiting...")

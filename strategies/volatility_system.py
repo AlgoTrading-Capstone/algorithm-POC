@@ -22,8 +22,8 @@ import talib.abstract as ta
 from typing import Union
 
 # Import utilities
-from strategies.utils.resampling import resample_to_interval, resampled_merge
-from strategies.utils.timeframes import timeframe_to_minutes
+from utils.resampling import resample_to_interval, resampled_merge
+from utils.timeframes import timeframe_to_minutes
 
 # Import base strategy components
 from strategies.base_strategy import BaseStrategy, SignalType, StrategyRecommendation
