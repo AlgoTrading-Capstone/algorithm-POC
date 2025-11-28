@@ -1,0 +1,102 @@
+# ============================================================================
+# Bitcoin Meta-RL Trading System - Requirements
+# Python Version: 3.11.7
+# ============================================================================
+
+# Core Data Science & ML Libraries
+# ----------------------------------------------------------------------------
+numpy==2.3.4                    # Numerical computing library
+pandas==2.3.3                   # Data manipulation and analysis
+ta-lib==0.6.8                   # Technical analysis indicators library
+
+# Reinforcement Learning
+# ----------------------------------------------------------------------------
+# Note: FinRL will be added later when moving from Stable Baselines3
+
+# Cryptocurrency & Exchange Integration
+# ----------------------------------------------------------------------------
+ccxt==4.5.19                    # Unified cryptocurrency exchange API
+
+# Database & Time Series
+# ----------------------------------------------------------------------------
+sqlalchemy==2.0.44              # SQL toolkit and ORM
+psycopg2-binary==2.9.11         # PostgreSQL adapter (binary distribution)
+# Note: TimescaleDB is a PostgreSQL extension, installed separately
+
+# HTTP & Networking
+# ----------------------------------------------------------------------------
+requests==2.32.5                # HTTP library for API calls
+aiohttp==3.13.2                 # Async HTTP client/server
+urllib3==2.5.0                  # HTTP client with connection pooling
+certifi==2025.11.12             # Root certificates for SSL/TLS
+
+# Data Validation & Parsing
+# ----------------------------------------------------------------------------
+pydantic==2.10.6                # Data validation using type hints
+pycparser==2.23                 # C parser for Python
+cffi==2.0.0                     # Foreign Function Interface for calling C code
+
+# Cryptography & Security
+# ----------------------------------------------------------------------------
+cryptography==46.0.3            # Cryptographic recipes and primitives
+pycares==4.11.0                 # Python interface for c-ares (async DNS)
+
+# Date & Time Handling
+# ----------------------------------------------------------------------------
+python-dateutil==2.9.0.post0    # Extensions to the standard datetime module
+pytz==2025.2                    # World timezone definitions
+tzdata==2025.2                  # IANA timezone database
+
+# Utilities
+# ----------------------------------------------------------------------------
+attrs==25.4.0                   # Classes without boilerplate
+frozenlist==1.8.0               # Immutable list implementation
+multidict==6.7.0                # Multi-value dictionary implementation
+yarl==1.22.0                    # Yet another URL library
+aiosignal==1.4.0                # List of registered asynchronous callbacks
+aiodns==3.5.0                   # Async DNS resolver
+aiohappyeyeballs==2.6.1         # Happy Eyeballs for asyncio
+idna==3.11                      # Internationalized Domain Names in Applications
+charset-normalizer==3.4.4       # Character encoding detection
+six==1.17.0                     # Python 2 and 3 compatibility utilities
+colorama==0.4.6                 # Cross-platform colored terminal text
+greenlet==3.2.4                 # Lightweight in-process concurrent programming
+
+# Type Checking & Extensions
+# ----------------------------------------------------------------------------
+typing-extensions==4.15.0       # Backported and experimental type hints
+
+# Build & Packaging Tools
+# ----------------------------------------------------------------------------
+setuptools==80.3.1              # Build and distribution utilities
+build==1.3.0                    # PEP 517 build frontend
+packaging==25.0                 # Core utilities for Python packages
+pip==25.1.1                     # Package installer for Python
+pyproject-hooks==1.2.0          # Build backend hooks for Python
+
+# Caching
+# ----------------------------------------------------------------------------
+propcache==0.4.1                # Fast property caching
+
+# Math & Scientific Computing
+# ----------------------------------------------------------------------------
+coincurve==21.0.0               # Cross-platform Python CFFI bindings for libsecp256k1
+
+# ============================================================================
+# Installation Notes
+# ============================================================================
+#
+# To install all dependencies:
+#   pip install -r requirements.txt
+#
+# For TA-Lib, you may need to install the C library first:
+#   - macOS: brew install ta-lib
+#   - Ubuntu/Debian: sudo apt-get install ta-lib
+#   - Windows: Download from https://www.lfd.uci.edu/~gohlke/pythonlibs/#ta-lib
+#
+# For PostgreSQL with TimescaleDB:
+#   - Install PostgreSQL 16.11
+#   - Install TimescaleDB extension separately
+#   - Ensure psycopg2-binary can connect to your database
+#
+# ============================================================================
