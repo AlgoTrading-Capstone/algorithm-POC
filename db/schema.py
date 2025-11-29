@@ -4,7 +4,7 @@ Creates and manages tables, hypertables, and indexes.
 """
 
 from sqlalchemy import text
-from db.connection import engine
+from db.connection import engine_db
 
 
 def create_schema():
@@ -16,7 +16,7 @@ def create_schema():
         - Converts to TimescaleDB hypertable
         - Creates indexes for efficient querying
     """
-    with engine.connect() as conn:
+    with engine_db.connect() as conn:
         try:
             # Create candles table
             conn.execute(text("""
@@ -67,7 +67,7 @@ def verify_schema():
     Note: TimescaleDB 2.23+ uses different column names in information views.
     This function queries the hypertables view to confirm setup.
     """
-    with engine.connect() as conn:
+    with engine_db.connect() as conn:
         try:
             # Check if hypertable exists
             # Note: chunk_time_interval column may vary by TimescaleDB version

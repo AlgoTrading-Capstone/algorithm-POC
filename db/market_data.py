@@ -14,7 +14,7 @@ import ccxt
 import pandas as pd
 from sqlalchemy import text
 
-from db.connection import engine
+from db.connection import engine_db
 import config
 
 
@@ -48,7 +48,7 @@ def initialize_market_data(
     exchange_name = exchange_name or config.EXCHANGE_NAME
 
     # Check if data already exists (idempotency)
-    with engine.connect() as conn:
+    with engine_db.connect() as conn:
         result = conn.execute(
             text("SELECT COUNT(*) FROM candles WHERE symbol = :symbol"),
             {'symbol': symbol}
@@ -120,7 +120,7 @@ def initialize_market_data(
     # Bulk insert with conflict handling
     print(f"[INIT] Inserting {len(records)} candles into database...")
 
-    with engine.begin() as conn:
+    with engine_db.begin() as conn:
         conn.execute(text("""
             INSERT INTO candles (time, symbol, open, high, low, close, volume)
             VALUES (:time, :symbol, :open, :high, :low, :close, :volume)
@@ -163,7 +163,7 @@ def sync_market_data(
     print(f"[SYNC] Syncing market data for {symbol}")
 
     # Find most recent candle in database
-    with engine.connect() as conn:
+    with engine_db.connect() as conn:
         result = conn.execute(
             text("SELECT MAX(time) FROM candles WHERE symbol = :symbol"),
             {'symbol': symbol}
@@ -207,7 +207,7 @@ def sync_market_data(
             })
 
         # Insert new candles
-        with engine.begin() as conn:
+        with engine_db.begin() as conn:
             conn.execute(text("""
                 INSERT INTO candles (time, symbol, open, high, low, close, volume)
                 VALUES (:time, :symbol, :open, :high, :low, :close, :volume)
@@ -219,7 +219,7 @@ def sync_market_data(
     # Delete old data
     cutoff_time = datetime.now(UTC) - timedelta(hours=lookback_hours)
 
-    with engine.begin() as conn:
+    with engine_db.begin() as conn:
         result = conn.execute(
             text("DELETE FROM candles WHERE symbol = :symbol AND time < :cutoff_time"),
             {'symbol': symbol, 'cutoff_time': cutoff_time}
@@ -231,7 +231,7 @@ def sync_market_data(
     return len(candles) if candles else 0
 
 
-def load_strategy_data(
+def fetch_ohlcv_dataframe(
     symbol: str = None,
     timeframe: str = None,
     lookback_hours: int = None
@@ -276,7 +276,7 @@ def load_strategy_data(
         ORDER BY time ASC
     """)
 
-    with engine.connect() as conn:
+    with engine_db.connect() as conn:
         df = pd.read_sql(
             query,
             conn,

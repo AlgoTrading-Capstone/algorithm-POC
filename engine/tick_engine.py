@@ -11,7 +11,7 @@ from apscheduler.triggers.cron import CronTrigger
 
 from config import GLOBAL_TICK
 from utils.timeframes import timeframe_to_cron
-from db.market_data import sync_market_data, load_strategy_data
+from db.market_data import sync_market_data, fetch_ohlcv_dataframe
 
 
 def start_tick_scheduler():
@@ -50,7 +50,7 @@ def run_tick_cycle():
 
         # 2. Load strategy data
         print("[TICK] Step 2/3: Loading strategy data from database")
-        df = load_strategy_data()
+        df = fetch_ohlcv_dataframe()
         print(f"[TICK] Loaded {len(df)} candles for strategies\n")
 
         # 3. Execute strategies (to be implemented)

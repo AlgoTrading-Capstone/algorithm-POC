@@ -22,7 +22,7 @@ DATABASE_URL = (
 )
 
 # Create SQLAlchemy engine
-engine = create_engine(DATABASE_URL, poolclass=NullPool)
+engine_db = create_engine(DATABASE_URL, poolclass=NullPool)
 
 
 def get_connection():
@@ -32,7 +32,7 @@ def get_connection():
     Returns:
         Connection: SQLAlchemy connection object
     """
-    return engine.connect()
+    return engine_db.connect()
 
 
 def test_connection():
@@ -41,7 +41,7 @@ def test_connection():
     Prints connection status and TimescaleDB version.
     """
     try:
-        with engine.connect() as conn:
+        with engine_db.connect() as conn:
             # Test basic connection
             result = conn.execute(text("SELECT version();"))
             pg_version = result.fetchone()[0]
