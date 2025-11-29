@@ -16,3 +16,6 @@ EXCHANGE_NAME = "binance"
 
 # Trading pair used by the system (CCXT format)
 TRADING_PAIR = "BTC/USDT"
+
+# Maximum allowed runtime for each strategy in seconds
+MAX_STRATEGY_RUNTIME = 5

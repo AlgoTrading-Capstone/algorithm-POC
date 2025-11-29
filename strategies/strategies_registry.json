@@ -1,0 +1,9 @@
+{
+  "VolatilitySystem": {
+    "enabled": true,
+    "module": "strategies.volatility_system",
+    "class_name": "VolatilitySystem",
+    "timeframe": "1h",
+    "lookback_hours": 66
+  }
+}

@@ -64,7 +64,7 @@ def initialize_market_data(
     start_time = end_time - timedelta(hours=lookback_hours)
 
     print(f"[INIT] Initializing market data for {symbol} ({timeframe})")
-    print(f"[INIT] Time range: {start_time} to {end_time}")
+    print(f"[INIT] Time range: {start_time.strftime('%H:%M:%S.%f UTC')} to {end_time.strftime('%H:%M:%S.%f UTC')}")
     print(f"[INIT] Fetching {lookback_hours} hours from {exchange_name}")
 
     # Initialize CCXT exchange
@@ -175,7 +175,7 @@ def sync_market_data(
             initialize_market_data(symbol, timeframe, lookback_hours, exchange_name)
             return 0
 
-    print(f"[SYNC] Last candle in DB: {last_time}")
+    print(f"[SYNC] Last candle in DB: {last_time.strftime('%H:%M:%S.%f UTC')}")
 
     # Fetch new candles since last_time
     since_ms = int(last_time.timestamp() * 1000) + 1
@@ -226,7 +226,7 @@ def sync_market_data(
         )
         deleted_count = result.rowcount
 
-    print(f"[SYNC] Deleted {deleted_count} old candles (before {cutoff_time})")
+    print(f"[SYNC] Deleted {deleted_count} old candles (before {cutoff_time.strftime('%H:%M:%S.%f UTC')})")
 
     return len(candles) if candles else 0
 
@@ -264,7 +264,7 @@ def fetch_ohlcv_dataframe(
     start_time = end_time - timedelta(hours=lookback_hours)
 
     print(f"[LOAD] Loading strategy data for {symbol} ({timeframe})")
-    print(f"[LOAD] Time range: {start_time} to {end_time}")
+    print(f"[LOAD] Time range: {start_time.strftime('%H:%M:%S.%f UTC')} to {end_time.strftime('%H:%M:%S.%f UTC')}")
 
     # Query database
     query = text("""
