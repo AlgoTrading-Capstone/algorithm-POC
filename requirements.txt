@@ -47,6 +47,10 @@ python-dateutil==2.9.0.post0    # Extensions to the standard datetime module
 pytz==2025.2                    # World timezone definitions
 tzdata==2025.2                  # IANA timezone database
 
+# Task Scheduling
+# ----------------------------------------------------------------------------
+APScheduler==3.10.4             # Cron-based task scheduler
+
 # Utilities
 # ----------------------------------------------------------------------------
 attrs==25.4.0                   # Classes without boilerplate
