@@ -12,5 +12,12 @@
     "class_name": "OTTStrategy",
     "timeframe": "1h",
     "lookback_hours": 50
+  },
+  "SupertrendStrategy": {
+    "enabled": false,
+    "module": "strategies.supertrend_strategy",
+    "class_name": "SupertrendStrategy",
+    "timeframe": "1h",
+    "lookback_hours": 124
   }
 }
