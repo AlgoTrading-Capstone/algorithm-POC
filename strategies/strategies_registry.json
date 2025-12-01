@@ -7,14 +7,14 @@
     "lookback_hours": 66
   },
   "OTTStrategy": {
-    "enabled": false,
+    "enabled": true,
     "module": "strategies.ott_strategy",
     "class_name": "OTTStrategy",
     "timeframe": "1h",
     "lookback_hours": 50
   },
   "SupertrendStrategy": {
-    "enabled": false,
+    "enabled": true,
     "module": "strategies.supertrend_strategy",
     "class_name": "SupertrendStrategy",
     "timeframe": "1h",

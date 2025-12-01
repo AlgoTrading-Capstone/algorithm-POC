@@ -93,8 +93,13 @@ def run_tick_cycle():
         )
 
         print("[TICK] Strategy results:")
-        for name, result in results.items():
-            print(f"       • {name}: {result}")
+        for name, r in results.items():
+            print(
+                f"       • {r['name']}: "
+                f"Decision: {r['signal']} | "
+                f"Time: {r['decision_time'].strftime('%H:%M:%S.%f UTC')} | "
+                f"Execution: {r['exec_time_ms']:.2f} ms"
+            )
 
         print("[TICK] Tick cycle completed successfully")
 

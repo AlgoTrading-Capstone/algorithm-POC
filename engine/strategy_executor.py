@@ -22,7 +22,19 @@ def execute_strategies_parallel(strategies_to_run, data_map, now):
         cls = load_strategy_class(cfg["module"], cfg["class_name"])
         instance = cls()
         df = data_map[name]
-        return instance.run(df, now)
+
+        # run strategy
+        rec = instance.run(df, now)
+
+        # calculate execution time
+        exec_ms = (rec.timestamp - now).total_seconds() * 1000
+
+        return {
+            "name": name,
+            "signal": rec.signal.value,
+            "decision_time": rec.timestamp,
+            "exec_time_ms": exec_ms,
+        }
 
     with ThreadPoolExecutor(max_workers=len(strategies_to_run)) as executor:
         futures = {
