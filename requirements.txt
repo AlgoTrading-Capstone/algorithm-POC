@@ -86,6 +86,12 @@ propcache==0.4.1                # Fast property caching
 # ----------------------------------------------------------------------------
 coincurve==21.0.0               # Cross-platform Python CFFI bindings for libsecp256k1
 
+# Testing Libraries
+# ----------------------------------------------------------------------------
+pytest==8.3.4                   # Testing framework
+pytest-freezegun==0.4.2         # Time mocking for tests
+pytest-cov==6.0.0               # Coverage reporting
+
 # ============================================================================
 # Installation Notes
 # ============================================================================
