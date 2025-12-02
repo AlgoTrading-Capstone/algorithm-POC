@@ -85,12 +85,14 @@ class SupertrendStrategy(BaseStrategy):
                             df.loc[i, 'final_ub'] if df.loc[i - 1, st] == df.loc[i - 1, 'final_lb'] and df.loc[i, 'close'] <  df.loc[i, 'final_lb'] else 0.00
 
         # Mark the trend direction up/down
-        df[stx] = np.where((df[st] > 0.00), np.where((df['close'] < df[st]), 'down',  'up'), np.NaN)
+        # Use None instead of np.nan to allow mixing with strings in numpy 2.0
+        df[stx] = np.where((df[st] > 0.00), np.where((df['close'] < df[st]), 'down',  'up'), None)
 
         # Remove basic and final bands from the columns
         df.drop(['basic_ub', 'basic_lb', 'final_ub', 'final_lb'], inplace=True, axis=1)
 
-        df.fillna(0, inplace=True)
+        # fillna with 0 for numeric columns, keep None for string column
+        df[st].fillna(0, inplace=True)
 
         return DataFrame(index=df.index, data={
             'ST': df[st],
