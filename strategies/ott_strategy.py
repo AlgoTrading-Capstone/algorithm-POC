@@ -63,9 +63,9 @@ class OTTStrategy(BaseStrategy):
         # df['Var'] = talib.EMA(df['close'], timeperiod=5)
         df["Var"] = 0.0
         for i in range(pds, len(df)):
-            df["Var"].iat[i] = (alpha * df["CMO"].iat[i] * df["close"].iat[i]) + (
-                1 - alpha * df["CMO"].iat[i]
-            ) * df["Var"].iat[i - 1]
+            df.loc[i, "Var"] = (alpha * df.loc[i, "CMO"] * df.loc[i, "close"]) + (
+                1 - alpha * df.loc[i, "CMO"]
+            ) * df.loc[i - 1, "Var"]
 
         df["fark"] = df["Var"] * percent * 0.01
         df["newlongstop"] = df["Var"] - df["fark"]
