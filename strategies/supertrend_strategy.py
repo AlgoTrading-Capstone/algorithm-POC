@@ -73,16 +73,16 @@ class SupertrendStrategy(BaseStrategy):
         df['final_ub'] = 0.00
         df['final_lb'] = 0.00
         for i in range(period, len(df)):
-            df['final_ub'].iat[i] = df['basic_ub'].iat[i] if df['basic_ub'].iat[i] < df['final_ub'].iat[i - 1] or df['close'].iat[i - 1] > df['final_ub'].iat[i - 1] else df['final_ub'].iat[i - 1]
-            df['final_lb'].iat[i] = df['basic_lb'].iat[i] if df['basic_lb'].iat[i] > df['final_lb'].iat[i - 1] or df['close'].iat[i - 1] < df['final_lb'].iat[i - 1] else df['final_lb'].iat[i - 1]
+            df.loc[i, 'final_ub'] = df.loc[i, 'basic_ub'] if df.loc[i, 'basic_ub'] < df.loc[i - 1, 'final_ub'] or df.loc[i - 1, 'close'] > df.loc[i - 1, 'final_ub'] else df.loc[i - 1, 'final_ub']
+            df.loc[i, 'final_lb'] = df.loc[i, 'basic_lb'] if df.loc[i, 'basic_lb'] > df.loc[i - 1, 'final_lb'] or df.loc[i - 1, 'close'] < df.loc[i - 1, 'final_lb'] else df.loc[i - 1, 'final_lb']
 
         # Set the Supertrend value
         df[st] = 0.00
         for i in range(period, len(df)):
-            df[st].iat[i] = df['final_ub'].iat[i] if df[st].iat[i - 1] == df['final_ub'].iat[i - 1] and df['close'].iat[i] <= df['final_ub'].iat[i] else \
-                            df['final_lb'].iat[i] if df[st].iat[i - 1] == df['final_ub'].iat[i - 1] and df['close'].iat[i] >  df['final_ub'].iat[i] else \
-                            df['final_lb'].iat[i] if df[st].iat[i - 1] == df['final_lb'].iat[i - 1] and df['close'].iat[i] >= df['final_lb'].iat[i] else \
-                            df['final_ub'].iat[i] if df[st].iat[i - 1] == df['final_lb'].iat[i - 1] and df['close'].iat[i] <  df['final_lb'].iat[i] else 0.00
+            df.loc[i, st] = df.loc[i, 'final_ub'] if df.loc[i - 1, st] == df.loc[i - 1, 'final_ub'] and df.loc[i, 'close'] <= df.loc[i, 'final_ub'] else \
+                            df.loc[i, 'final_lb'] if df.loc[i - 1, st] == df.loc[i - 1, 'final_ub'] and df.loc[i, 'close'] >  df.loc[i, 'final_ub'] else \
+                            df.loc[i, 'final_lb'] if df.loc[i - 1, st] == df.loc[i - 1, 'final_lb'] and df.loc[i, 'close'] >= df.loc[i, 'final_lb'] else \
+                            df.loc[i, 'final_ub'] if df.loc[i - 1, st] == df.loc[i - 1, 'final_lb'] and df.loc[i, 'close'] <  df.loc[i, 'final_lb'] else 0.00
 
         # Mark the trend direction up/down
         df[stx] = np.where((df[st] > 0.00), np.where((df['close'] < df[st]), 'down',  'up'), np.NaN)
