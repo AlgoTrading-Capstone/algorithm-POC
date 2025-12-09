@@ -1,0 +1,93 @@
+name: Sync Strategies to RL Training
+
+on:
+  workflow_run:
+    workflows: ["Run Tests"]
+    types:
+      - completed
+    branches:
+      - main
+
+jobs:
+  check-strategy-changes:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    outputs:
+      strategies_changed: ${{ steps.check.outputs.strategies_changed }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 2
+    
+    - name: Check for strategy changes
+      id: check
+      run: |
+        # Get the list of changed files in the last commit
+        CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
+        echo "Changed files:"
+        echo "$CHANGED_FILES"
+        
+        # Check if any files in strategies/ folder changed
+        if echo "$CHANGED_FILES" | grep -q "^strategies/"; then
+          echo "strategies_changed=true" >> $GITHUB_OUTPUT
+          echo "Strategy files changed - will proceed with sync"
+        else
+          echo "strategies_changed=false" >> $GITHUB_OUTPUT
+          echo "No strategy files changed - skipping sync"
+        fi
+  
+  sync:
+    runs-on: ubuntu-latest
+    needs: check-strategy-changes
+    if: needs.check-strategy-changes.outputs.strategies_changed == 'true'
+    
+    steps:
+    - name: Checkout algorithm-POC repository
+      uses: actions/checkout@v4
+      with:
+        path: algorithm-poc
+    
+    - name: Checkout rl-training repository
+      uses: actions/checkout@v4
+      with:
+        repository: AlgoTrading-Capstone/rl-training
+        token: ${{ secrets.RL_TRAINING_PAT }}
+        path: rl-training
+    
+    - name: Sync strategies folder
+      run: |
+        # Create strategies directory in rl-training if it doesn't exist
+        mkdir -p rl-training/strategies
+        
+        # Remove old strategies files (but keep the directory)
+        rm -rf rl-training/strategies/*
+        
+        # Copy all files from strategies folder, excluding src/ and __pycache__/
+        cd algorithm-poc/strategies
+        find . -maxdepth 1 -type f \( -name "*.py" -o -name "*.json" -o -name "*.md" \) -exec cp {} ../../rl-training/strategies/ \;
+        
+        # List what was copied
+        echo "Files synced to rl-training/strategies:"
+        ls -la ../../rl-training/strategies/
+    
+    - name: Commit and push changes
+      working-directory: rl-training
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        
+        git add strategies/
+        
+        # Check if there are changes to commit
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "Sync strategies from algorithm-POC
+
+          Auto-synced strategy files from algorithm-POC repository
+          Triggered by commit: ${{ github.sha }}"
+          git push
+          echo "Changes pushed successfully"
+        fi
+

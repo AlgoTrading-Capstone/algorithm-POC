@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+
+# IDEs
+.idea/
+.vscode/
+
+# Project specific
+.claude/
+CLAUDE.md
+nul
+
+# Environment
+.env
+
+# OS
+.DS_Store
+Thumbs.db
