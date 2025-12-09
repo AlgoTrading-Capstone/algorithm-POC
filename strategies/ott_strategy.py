@@ -63,15 +63,20 @@ class OTTStrategy(BaseStrategy):
         # df['Var'] = talib.EMA(df['close'], timeperiod=5)
         df["Var"] = 0.0
         for i in range(pds, len(df)):
-            df.loc[i, "Var"] = (alpha * df.loc[i, "CMO"] * df.loc[i, "close"]) + (
-                1 - alpha * df.loc[i, "CMO"]
-            ) * df.loc[i - 1, "Var"]
+            var_col = df.columns.get_loc("Var")
+            cmo_col = df.columns.get_loc("CMO")
+            close_col = df.columns.get_loc("close")
+            prev_var_col = df.columns.get_loc("Var")
+            df.iloc[i, var_col] = (
+                    alpha * df.iloc[i, cmo_col] * df.iloc[i, close_col]
+                    + (1 - alpha * df.iloc[i, cmo_col]) * df.iloc[i - 1, prev_var_col]
+            )
 
         df["fark"] = df["Var"] * percent * 0.01
         df["newlongstop"] = df["Var"] - df["fark"]
         df["newshortstop"] = df["Var"] + df["fark"]
         df["longstop"] = 0.0
-        df["shortstop"] = 999999999999999999
+        df["shortstop"] = 999999999999999999.0
         # df['dir'] = 1
         for i in df["UD"]:
 

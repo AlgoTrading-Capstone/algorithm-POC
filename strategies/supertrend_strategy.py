@@ -73,26 +73,27 @@ class SupertrendStrategy(BaseStrategy):
         df['final_ub'] = 0.00
         df['final_lb'] = 0.00
         for i in range(period, len(df)):
-            df.loc[i, 'final_ub'] = df.loc[i, 'basic_ub'] if df.loc[i, 'basic_ub'] < df.loc[i - 1, 'final_ub'] or df.loc[i - 1, 'close'] > df.loc[i - 1, 'final_ub'] else df.loc[i - 1, 'final_ub']
-            df.loc[i, 'final_lb'] = df.loc[i, 'basic_lb'] if df.loc[i, 'basic_lb'] > df.loc[i - 1, 'final_lb'] or df.loc[i - 1, 'close'] < df.loc[i - 1, 'final_lb'] else df.loc[i - 1, 'final_lb']
+            df.iloc[i, df.columns.get_loc('final_ub')] = df.iloc[i, df.columns.get_loc('basic_ub')] if df.iloc[i, df.columns.get_loc('basic_ub')] < df.iloc[i - 1, df.columns.get_loc('final_ub')] or df.iloc[i - 1, df.columns.get_loc('close')] > df.iloc[i - 1, df.columns.get_loc('final_ub')] else df.iloc[i - 1, df.columns.get_loc('final_ub')]
+            df.iloc[i, df.columns.get_loc('final_lb')] = df.iloc[i, df.columns.get_loc('basic_lb')] if df.iloc[i, df.columns.get_loc('basic_lb')] > df.iloc[i - 1, df.columns.get_loc('final_lb')] or df.iloc[i - 1, df.columns.get_loc('close')] < df.iloc[i - 1, df.columns.get_loc('final_lb')] else df.iloc[i - 1, df.columns.get_loc('final_lb')]
 
         # Set the Supertrend value
         df[st] = 0.00
+        st_col_idx = df.columns.get_loc(st)
         for i in range(period, len(df)):
-            df.loc[i, st] = df.loc[i, 'final_ub'] if df.loc[i - 1, st] == df.loc[i - 1, 'final_ub'] and df.loc[i, 'close'] <= df.loc[i, 'final_ub'] else \
-                            df.loc[i, 'final_lb'] if df.loc[i - 1, st] == df.loc[i - 1, 'final_ub'] and df.loc[i, 'close'] >  df.loc[i, 'final_ub'] else \
-                            df.loc[i, 'final_lb'] if df.loc[i - 1, st] == df.loc[i - 1, 'final_lb'] and df.loc[i, 'close'] >= df.loc[i, 'final_lb'] else \
-                            df.loc[i, 'final_ub'] if df.loc[i - 1, st] == df.loc[i - 1, 'final_lb'] and df.loc[i, 'close'] <  df.loc[i, 'final_lb'] else 0.00
+            df.iloc[i, st_col_idx] = df.iloc[i, df.columns.get_loc('final_ub')] if df.iloc[i - 1, st_col_idx] == df.iloc[i - 1, df.columns.get_loc('final_ub')] and df.iloc[i, df.columns.get_loc('close')] <= df.iloc[i, df.columns.get_loc('final_ub')] else \
+                            df.iloc[i, df.columns.get_loc('final_lb')] if df.iloc[i - 1, st_col_idx] == df.iloc[i - 1, df.columns.get_loc('final_ub')] and df.iloc[i, df.columns.get_loc('close')] >  df.iloc[i, df.columns.get_loc('final_ub')] else \
+                            df.iloc[i, df.columns.get_loc('final_lb')] if df.iloc[i - 1, st_col_idx] == df.iloc[i - 1, df.columns.get_loc('final_lb')] and df.iloc[i, df.columns.get_loc('close')] >= df.iloc[i, df.columns.get_loc('final_lb')] else \
+                            df.iloc[i, df.columns.get_loc('final_ub')] if df.iloc[i - 1, st_col_idx] == df.iloc[i - 1, df.columns.get_loc('final_lb')] and df.iloc[i, df.columns.get_loc('close')] <  df.iloc[i, df.columns.get_loc('final_lb')] else 0.00
 
         # Mark the trend direction up/down
         # Use None instead of np.nan to allow mixing with strings in numpy 2.0
         df[stx] = np.where((df[st] > 0.00), np.where((df['close'] < df[st]), 'down',  'up'), None)
 
         # Remove basic and final bands from the columns
-        df.drop(['basic_ub', 'basic_lb', 'final_ub', 'final_lb'], inplace=True, axis=1)
+        df = df.drop(['basic_ub', 'basic_lb', 'final_ub', 'final_lb'], axis=1)
 
         # fillna with 0 for numeric columns, keep None for string column
-        df[st].fillna(0, inplace=True)
+        df[st] = df[st].fillna(0)
 
         return DataFrame(index=df.index, data={
             'ST': df[st],

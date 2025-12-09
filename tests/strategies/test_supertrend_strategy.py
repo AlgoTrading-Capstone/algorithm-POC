@@ -367,3 +367,24 @@ class TestSupertrendStrategyIntegration:
         assert 'STX' in result2.columns
         assert 'ST' in result3.columns
         assert 'STX' in result3.columns
+
+
+class TestSupertrendWarnings:
+    """Test that strategy works even with strict warning mode."""
+
+    def test_no_future_warnings(self, load_fixture_df, fixed_timestamp):
+        """Ensure strategy doesn't raise FutureWarnings (pandas 3.0 compatibility)."""
+        import warnings
+
+        # Treat FutureWarnings as errors to catch pandas deprecation issues
+        with warnings.catch_warnings():
+            warnings.simplefilter('error', FutureWarning)
+
+            strategy = SupertrendStrategy()
+            df = load_fixture_df('btc_usdt_1h_200.csv')
+
+            # Should not raise FutureWarning
+            result = strategy.run(df, fixed_timestamp)
+
+            assert isinstance(result, StrategyRecommendation)
+            assert result.signal in [SignalType.LONG, SignalType.HOLD]

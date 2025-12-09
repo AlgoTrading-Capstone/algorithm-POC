@@ -9,7 +9,7 @@ MIN_TIMEFRAME = "1h"
 MAX_LOOKBACK_HOURS = 720
 
 # How often the strategy engine runs (system-wide tick)
-GLOBAL_TICK = "1h"
+GLOBAL_TICK = "1m"
 
 # Exchange used for market data and trading (CCXT identifier)
 EXCHANGE_NAME = "binance"
