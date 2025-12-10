@@ -57,15 +57,49 @@ jobs:
     
     - name: Sync strategies folder
       run: |
+        # Define files that should be preserved (not deleted during sync)
+        PRESERVE_FILES="registry.py"
+        
         # Create strategies directory in rl-training if it doesn't exist
         mkdir -p rl-training/strategies
         
-        # Remove old strategies files (but keep the directory)
-        rm -rf rl-training/strategies/*
+        # Create temporary backup directory for preserved files
+        TEMP_BACKUP=$(mktemp -d)
+        
+        # Backup files that should be preserved
+        cd rl-training/strategies
+        echo "$PRESERVE_FILES" | tr ' ' '\n' | while read -r file; do
+          if [ -f "$file" ]; then
+            echo "Backing up preserved file: $file"
+            cp "$file" "$TEMP_BACKUP/"
+          fi
+        done
+        cd ../..
+        
+        # Remove old strategies files (but keep the directory and preserved files)
+        # Delete only files that are not in the preserve list
+        cd rl-training/strategies
+        find . -maxdepth 1 -type f | while read -r file; do
+          basefile=$(basename "$file")
+          if ! echo "$PRESERVE_FILES" | tr ' ' '\n' | grep -xq "$basefile"; then
+            echo "Deleting file: $basefile"
+            rm -f "$basefile"
+          fi
+        done
+        
+        # Restore preserved files
+        if [ -n "$(ls -A "$TEMP_BACKUP" 2>/dev/null)" ]; then
+          echo "Restoring preserved files:"
+          cp "$TEMP_BACKUP/"* rl-training/strategies/ 2>/dev/null || true
+          ls -la "$TEMP_BACKUP/"
+        fi
+        
+        # Clean up temporary backup directory
+        rm -rf "$TEMP_BACKUP"
         
         # Copy all files from strategies folder, excluding src/ and __pycache__/
         cd algorithm-poc/strategies
-        find . -maxdepth 1 -type f \( -name "*.py" -o -name "*.json" -o -name "*.md" \) -exec cp {} ../../rl-training/strategies/ \;
+        find . -maxdepth 1 -type f \( -name "*.py" -o -name "*.json" -o -name "*.md" \) -exec cp "{}" ../../rl-training/strategies/ \;
         
         # List what was copied
         echo "Files synced to rl-training/strategies:"
